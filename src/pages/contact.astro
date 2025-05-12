@@ -200,47 +200,55 @@ import { courses } from '../data/courses';
     </div>
   </section>
 
-  <script>
-    document.getElementById('contact-form')?.addEventListener('submit', function(e) {
-      e.preventDefault();
+  <script is:inline>
+    // Esperar a que el DOM esté completamente cargado
+    document.addEventListener('DOMContentLoaded', () => {
+      // Manejar el envío del formulario
+      const contactForm = document.getElementById('contact-form');
       
-      // Recopila los datos del formulario
-      const formData = new FormData(this);
-      const data = Object.fromEntries(formData.entries());
+      if (contactForm instanceof HTMLFormElement) {
+        contactForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          // Recopilar los datos del formulario
+          const formData = new FormData(this);
+          const data = Object.fromEntries(formData.entries());
 
-      // Validación básica
-      if (!data.nombre || !data.email || !data.mensaje) {
-        alert('Por favor, complete todos los campos obligatorios.');
-        return;
+          // Validación básica
+          if (!data.nombre || !data.email || !data.mensaje || !data.politica) {
+            alert('Por favor, complete todos los campos obligatorios.');
+            return;
+          }
+
+          // Simular envío (en producción, usar fetch o similar)
+          console.log('Datos del formulario:', data);
+          
+          // Mostrar mensaje de éxito
+          alert('Gracias por tu mensaje. Nos pondremos en contacto contigo pronto.');
+          
+          // Limpiar formulario
+          this.reset();
+        });
       }
 
-      // Aquí iría la lógica de envío real (por ejemplo, a un backend)
-      console.log('Datos del formulario:', data);
-      
-      // Mensaje de confirmación
-      alert('Gracias por tu mensaje. Nos pondremos en contacto contigo pronto.');
-      
-      // Limpiar formulario
-      this.reset();
-    });
-
-    // Prellenar servicio si viene de la URL
-    window.addEventListener('load', () => {
+      // Prellenar servicio si viene de la URL
       const urlParams = new URLSearchParams(window.location.search);
       const servicioId = urlParams.get('servicio');
       const cursoId = urlParams.get('curso');
 
-      if (servicioId) {
+      if (servicioId || cursoId) {
         const servicioSelect = document.getElementById('servicio');
+        if (servicioSelect instanceof HTMLSelectElement) {
+        
         if (servicioSelect) {
-          servicioSelect.value = servicioId;
-        }
-      } else if (cursoId) {
-        const servicioSelect = document.getElementById('servicio');
-        if (servicioSelect) {
-          servicioSelect.value = `curso-${cursoId}`;
+          if (servicioId) {
+            servicioSelect.value = servicioId;
+          } else if (cursoId) {
+            servicioSelect.value = `curso-${cursoId}`;
+          }
         }
       }
+    }
     });
   </script>
 </Layout>
