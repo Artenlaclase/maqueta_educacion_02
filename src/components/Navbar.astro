@@ -1,5 +1,10 @@
 ---
-const menuItems = [
+interface MenuItem {
+  name: string;
+  href: string;
+}
+
+const menuItems: MenuItem[] = [
   { name: 'Inicio', href: '/' },
   { name: 'Sobre Nosotros', href: '/about' },
   { name: 'Servicios y Cursos', href: '/services' },
@@ -30,16 +35,28 @@ const menuItems = [
     </div>
     
     <div class="md:hidden">
-      <button id="mobile-menu-toggle" class="text-white focus:outline-none">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <button 
+        id="mobile-menu-button"
+        type="button" 
+        class="text-white focus:outline-none"
+        aria-label="Toggle menu"
+        aria-expanded="false"
+      >
+        <svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+        <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
         </svg>
       </button>
     </div>
   </div>
   
-  <!-- Mobile Menu (Hidden by default) -->
-  <div id="mobile-menu" class="hidden md:hidden bg-primary-600">
+  <!-- Mobile Menu -->
+  <div 
+    id="mobile-menu" 
+    class="hidden md:hidden bg-primary-600 transition-all duration-300 ease-in-out"
+  >
     <div class="px-2 pt-2 pb-3 space-y-1">
       {menuItems.map((item) => (
         <a 
@@ -53,11 +70,37 @@ const menuItems = [
   </div>
 </nav>
 
-<script>
-  const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-  const mobileMenu = document.getElementById('mobile-menu');
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const menuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuIcon = document.getElementById('menu-icon');
+    const closeIcon = document.getElementById('close-icon');
 
-  mobileMenuToggle?.addEventListener('click', () => {
-    mobileMenu?.classList.toggle('hidden');
+    if (menuButton && mobileMenu) {
+      menuButton.addEventListener('click', () => {
+        const isExpanded = menuButton.getAttribute('aria-expanded') === 'true';
+        
+        // Toggle menu visibility
+        mobileMenu.classList.toggle('hidden');
+        
+        // Toggle icons
+        menuIcon.classList.toggle('hidden');
+        closeIcon.classList.toggle('hidden');
+        
+        // Update aria attributes
+        menuButton.setAttribute('aria-expanded', !isExpanded);
+      });
+
+      // Close menu when clicking on a link (optional)
+      mobileMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          mobileMenu.classList.add('hidden');
+          menuIcon.classList.remove('hidden');
+          closeIcon.classList.add('hidden');
+          menuButton.setAttribute('aria-expanded', 'false');
+        });
+      });
+    }
   });
 </script>
